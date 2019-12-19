@@ -1,5 +1,16 @@
 # TopdeskExport
-An export script for a topdesk SAAS installation
+An export script for a topdesk SAAS installation.
+
+This will produce a file structure that looks like the following:
+
+```
+/output
+└── /Operator Group (every ticket is grouped by it's operator group)
+    └── /Ticket Name
+        └── /emails (contains all emails that have been sent)
+        └── /files (contains all attachments)
+        └── ticket.pdf (contains the conversation in a readable format)
+```
 
 ## Requirements
 - apache or nginx
