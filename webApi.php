@@ -15,16 +15,18 @@ include("lib/tcpdf.php");
 include("util.php");
 include("export.php");
 
-//Initialize constants
-const BASE_URL = "https://centrumveiligwonen.topdesk.net";
-const API_URL = BASE_URL . "/tas/api/";
+//Read config file
+$config = parse_ini_file("config.ini");
 
-const TOPDESK_USER = "jorin.vermeulen@cvw.nl";
-const TOPDESK_PASS = "p3plq-xrwyj-6irnt-eag6w-675at";
+//Initialize constants
+define('TOPDESK_USER', $config['user']);
+define('TOPDESK_PASS', $config['pass']);
+define('BASE_URL', "https://" . $config['topdesk_domain']);
+const API_URL = BASE_URL . "/tas/api/";
+const RESUME_FILE = "current_progress.json";
 
 //Start parsing.
 $api = new api(API_URL, TOPDESK_USER, TOPDESK_PASS);
-
 
 function returnJson(bool $error, string $message, $result = array()) {
     return json_encode([
@@ -37,6 +39,24 @@ function returnJson(bool $error, string $message, $result = array()) {
 function apiCall($api, $method, $data)
 {
     switch ($method) {
+        case "getPreviousProgress":
+            if(file_exists(RESUME_FILE) == false) {
+                return returnJson(false, "no previous progress has been saved yet", [
+                    'previousProgressAvailable' => false
+                ]);
+            }
+
+            $filedata = file_get_contents(RESUME_FILE);
+
+            if(empty($filedata)) {
+                return returnJson(false, "no previous progress has been saved yet", [
+                    'previousProgressAvailable' => false
+                ]);
+            }
+
+            return returnJson(false, "", json_decode($filedata));
+            break;
+
         case "getIncidentList":
             $result = $api->getIncidentIds(9999);
 
@@ -49,6 +69,14 @@ function apiCall($api, $method, $data)
         case "exportTicket":
             $inc = $api->getIncident($data['ticketId']);
             exportData($api, $inc);
+
+            $progress = [
+                'previousProgressAvailable' => true,
+                'lastTicket'        => $data['ticketId'],
+                'lastTicketNumber'  => $data['ticketNo']
+            ];
+
+            file_put_contents(RESUME_FILE, json_encode($progress));
 
             return returnJson(false, "Export succeeded", []);
             break;
@@ -63,6 +91,10 @@ $data = [];
 
 if(empty($_GET['ticketId']) == false) {
     $data['ticketId'] = preg_replace('/[^ \w]+/', '', $_GET['ticketId']);
+}
+
+if(empty($_GET['ticketNo']) == false) {
+    $data['ticketNo'] = preg_replace('/\D/', '', $_GET['ticketNo']);
 }
 
 $result = apiCall($api, $method, $data);
