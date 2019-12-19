@@ -38,3 +38,6 @@ If tickets or responses are hidden from this account, they will not (and cannot)
 Did you find this tool useful? Feel free to buy me a beer or a pizza!
 - [Paypal donation](https://www.paypal.me/xorinzor)
 - [BuyMeACoffee](https://www.buymeacoffee.com/xorinzor)
+
+## Changelog
+19-12-2019 14:00 - Version 1.0 
