@@ -72,6 +72,8 @@ class topdeskAPI
             return $item = $item->number;
         });
 
+        sort($result, SORT_STRING);
+
         return $result;
     }
 
