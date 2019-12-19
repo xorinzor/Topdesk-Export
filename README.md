@@ -44,6 +44,8 @@ Did you find this tool useful? Feel free to buy me a beer or a pizza!
 - Add more fields from the tickets to the PDF (such as, priority)
 
 ## Changelog
+19-12-2019 15:15 - Improved PDF generation, translated some text
+
 19-12-2019 14:30 - Organized files a bit more
 
 19-12-2019 14:00 - Version 1.0 

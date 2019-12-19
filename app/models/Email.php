@@ -24,7 +24,7 @@ class Email extends Response
         return
             "<div style='background-color:#ffe8a8;'>".
             "<p><b>Timestamp:</b> {$this->getTimestamp()}<br />".
-            "<b>Email verstuurd door:</b> $this->user</p>".
+            "<b>Email sent by:</b> $this->user</p>".
             "$this->request</div><hr /><br /><br />";
     }
 
