@@ -16,44 +16,18 @@ class topdeskAPI
     }
 
     private function getFromCache($id) {
-        return file_get_contents("cache".DIRECTORY_SEPARATOR.$id.".cache");
+        return file_get_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache");
     }
 
     private function addToCache($id, $content) {
-        file_put_contents("cache".DIRECTORY_SEPARATOR.$id.".cache", $content);
+        file_put_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache", $content);
     }
 
     private function cacheExists($id) {
-        return file_exists("cache".DIRECTORY_SEPARATOR.$id.".cache");
+        return file_exists(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache");
     }
 
-    public function getResponse($url) : string {
-        $headers = [
-            'Accept: application/json',
-            'Authorization: Basic ' . $this->authToken,
-            'Cache-Control: no-cache',
-            'Accept-Encoding: gzip, deflate'
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_ENCODING,"");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $response = curl_exec($ch);
-        curl_close ($ch);
-
-        if($response === false) {
-            throw new Exception("An error occured during the cURL request");
-        }
-
-        return $response;
-    }
-
-    private function makeCall($url, $headers = array()) : string {
+    public function makeCall($url, $headers = array(), $enableCache = true) : string {
         $headers = array_merge([
             'Accept: application/json',
             'Authorization: Basic ' . $this->authToken,
@@ -61,10 +35,12 @@ class topdeskAPI
             'Accept-Encoding: gzip, deflate'
         ], $headers);
 
-        $uniqId = md5($url.json_encode($headers));
+        if($enableCache) {
+            $uniqId = md5($url . json_encode($headers));
 
-        if($this->cacheExists($uniqId)) {
-            return $this->getFromCache($uniqId);
+            if ($this->cacheExists($uniqId)) {
+                return $this->getFromCache($uniqId);
+            }
         }
 
         $ch = curl_init();
@@ -82,7 +58,9 @@ class topdeskAPI
             throw new Exception("An error occured during the cURL request");
         }
 
-        $this->addToCache($uniqId, $response);
+        if($enableCache) {
+            $this->addToCache($uniqId, $response);
+        }
 
         return $response;
     }
@@ -90,7 +68,6 @@ class topdeskAPI
     public function getIncidentIds($count = 99999) {
         $result = json_decode($this->makeCall($this->baseUrl . 'incidents?page_size=' . $count));
 
-        echo '<pre>';
         array_walk($result, function(&$item, $key) {
             return $item = $item->number;
         });

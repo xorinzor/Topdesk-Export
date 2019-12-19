@@ -1,6 +1,6 @@
 <?php
-//Prevent output that would invalidate the JSON output.
-ob_start();
+
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 //Classes
 include("topdeskAPI.php");
@@ -23,7 +23,8 @@ $config = parse_ini_file("../config.ini");
 define('TOPDESK_USER', $config['user']);
 define('TOPDESK_PASS', $config['pass']);
 define('BASE_URL', "https://" . $config['topdesk_domain']);
-const API_URL = BASE_URL . "/tas/topdeskAPI/";
+const API_URL = BASE_URL . "/tas/api/";
+
 const RESUME_FILE = "../current_progress.json";
 
 //Start parsing.
@@ -95,9 +96,6 @@ $data['ticketId'] = (empty($_GET['ticketId']) == false) ? preg_replace('/[^ \w]+
 $data['ticketNo'] = (empty($_GET['ticketNo']) == false) ? preg_replace('/\D/', '', $_GET['ticketNo']) : 0;
 
 $result = apiCall($api, $method, $data);
-
-//Remove any previous output
-ob_end_clean();
 
 //Return the JSON data
 echo $result;

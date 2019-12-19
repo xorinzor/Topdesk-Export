@@ -36,11 +36,17 @@ $(function() {
             if(result === false) {
                 //The request has failed or an invalid response has been returned.
             } else {
-                $("#statusText").append("<br />Found " + result.result.count + " tickets<br />Checking if previous progress exists..");
-                $("#statusProgress").val(1).attr("max", result.result.count);
-
                 totalTicketCount = result.result.count;
                 ticketList = result.result.data;
+
+                //Check if tickets are found.
+                if(totalTicketCount === 0) {
+                    showError("No tickets found, does the configured account have the proper permissions in topdesk?");
+                    return;
+                }
+
+                $("#statusText").append("<br />Found " + totalTicketCount + " tickets<br />Checking if previous progress exists..");
+                $("#statusProgress").val(1).attr("max", totalTicketCount);
 
                 checkPreviousProgress();
             }
@@ -64,7 +70,7 @@ $(function() {
 
                     //Doublecheck that the offset is still valid, and the array hasn't shifted, possibly
                     //leading to missing tickets in the export.
-                    if(ticketList.length < tmpLastTicketNumber || ticketList[tmpLastTicketNumber] === tmpLastTicketName) {
+                    if(totalTicketCount >= tmpLastTicketNumber && ticketList[tmpLastTicketNumber] === tmpLastTicketName) {
                         //Offset matches, resume export.
 
                         $("#statusText").append("<br />Previous progress found and validated, resuming export.");
@@ -80,7 +86,7 @@ $(function() {
     }
 
     function startExport(startAt) {
-        $("#statusText").append("<br />Exporting ticket <span id='currentTicket'>" + startAt + "</span> of " + ticketList.length + "..");
+        $("#statusText").append("<br />Exporting ticket <span id='currentTicket'>" + startAt + "</span> of " + totalTicketCount + "..");
         exportTicket(startAt);
     }
 

@@ -31,7 +31,8 @@
                 <div id="statusDivider" class="is-hidden divider">&nbsp;</div>
 
                 <div class="is-hidden container" id="statusContainer">
-                    <p id="statusText">Fetching ticket list, this may take a while..</p>
+                    <pre id="statusText">Fetching ticket list, this may take a while..</pre>
+                    <br />
                     <progress id="statusProgress" class="progress is-small is-primary" max="100">15%</progress>
                 </div>
 
