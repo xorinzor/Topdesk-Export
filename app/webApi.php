@@ -1,8 +1,9 @@
 <?php
+//Prevent output that would invalidate the JSON output.
 ob_start();
 
 //Classes
-include("api.php");
+include("topdeskAPI.php");
 include("Incident.php");
 include("Response.php");
 include("File.php");
@@ -16,17 +17,17 @@ include("util.php");
 include("export.php");
 
 //Read config file
-$config = parse_ini_file("config.ini");
+$config = parse_ini_file("../config.ini");
 
 //Initialize constants
 define('TOPDESK_USER', $config['user']);
 define('TOPDESK_PASS', $config['pass']);
 define('BASE_URL', "https://" . $config['topdesk_domain']);
-const API_URL = BASE_URL . "/tas/api/";
-const RESUME_FILE = "current_progress.json";
+const API_URL = BASE_URL . "/tas/topdeskAPI/";
+const RESUME_FILE = "../current_progress.json";
 
 //Start parsing.
-$api = new api(API_URL, TOPDESK_USER, TOPDESK_PASS);
+$api = new topdeskAPI(API_URL, TOPDESK_USER, TOPDESK_PASS);
 
 function returnJson(bool $error, string $message, $result = array()) {
     return json_encode([
@@ -58,7 +59,7 @@ function apiCall($api, $method, $data)
             break;
 
         case "getIncidentList":
-            $result = $api->getIncidentIds(9999);
+            $result = $api->getIncidentIds(10000);
 
             return returnJson(false, "", [
                 'count' => count($result),
@@ -68,7 +69,7 @@ function apiCall($api, $method, $data)
 
         case "exportTicket":
             $inc = $api->getIncident($data['ticketId']);
-            exportData($api, $inc);
+            exportIncidentToPDF($api, $inc);
 
             $progress = [
                 'previousProgressAvailable' => true,
@@ -89,16 +90,14 @@ function apiCall($api, $method, $data)
 $method = $_GET['method'];
 $data = [];
 
-if(empty($_GET['ticketId']) == false) {
-    $data['ticketId'] = preg_replace('/[^ \w]+/', '', $_GET['ticketId']);
-}
-
-if(empty($_GET['ticketNo']) == false) {
-    $data['ticketNo'] = preg_replace('/\D/', '', $_GET['ticketNo']);
-}
+//Sanitize the GET variables used by the API
+$data['ticketId'] = (empty($_GET['ticketId']) == false) ? preg_replace('/[^ \w]+/', '', $_GET['ticketId']) : '';
+$data['ticketNo'] = (empty($_GET['ticketNo']) == false) ? preg_replace('/\D/', '', $_GET['ticketNo']) : 0;
 
 $result = apiCall($api, $method, $data);
 
+//Remove any previous output
 ob_end_clean();
 
+//Return the JSON data
 echo $result;

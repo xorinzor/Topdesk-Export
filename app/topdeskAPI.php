@@ -1,7 +1,6 @@
 <?php
 
-
-class api
+class topdeskAPI
 {
     private $baseUrl;
     private $username;

@@ -2,7 +2,7 @@
     <head>
         <title>TopDesk exporter</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link type="text/css" href="/css/bulma.min.css" rel="stylesheet" />
+        <link type="text/css" href="/static/css/bulma.min.css" rel="stylesheet" />
 
         <style type="text/css">
             .divider {
@@ -50,7 +50,7 @@
             </div>
         </footer>
 
-        <script type="text/javascript" src="/js/jquery.js"></script>
-        <script type="text/javascript" src="/js/script.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.js"></script>
+        <script type="text/javascript" src="/static/js/script.js"></script>
     </body>
 </html>

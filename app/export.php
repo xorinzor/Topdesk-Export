@@ -1,10 +1,16 @@
 <?php
 
-function exportData($api, $incident) {
-    $operatorGroupPath = 'output'.DIRECTORY_SEPARATOR.$incident->getOperatorGroup();
+/**
+ * This function turns the incident data into a PDF file
+ * @param $api
+ * @param $incident
+ */
+
+function exportIncidentToPDF($api, $incident) {
+    $operatorGroupPath = '../output' . DIRECTORY_SEPARATOR . $incident->getOperatorGroup();
     @mkdir($operatorGroupPath);
 
-    $incPath = $operatorGroupPath.DIRECTORY_SEPARATOR.$incident->getNumber();
+    $incPath = $operatorGroupPath . DIRECTORY_SEPARATOR . $incident->getNumber();
     @mkdir($incPath);
 
     $communication =
@@ -47,8 +53,8 @@ function exportData($api, $incident) {
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
     // set document information
-    $pdf->SetCreator(PDF_CREATOR);
-    $pdf->SetAuthor('Jorin Vermeulen');
+    $pdf->SetCreator('github.com/xorinzor/TopdeskExport');
+    $pdf->SetAuthor('github.com/xorinzor/TopdeskExport');
     $pdf->SetTitle($incident->getNumber() . ' - ' . $incident->getBriefDescription());
     $pdf->SetSubject($incident->getNumber() . ' - ' . $incident->getBriefDescription());
     $pdf->SetKeywords('Topdesk, ' . $incident->getNumber());
@@ -90,5 +96,4 @@ function exportData($api, $incident) {
 
     //Close and output PDF document
     $pdf->Output(realpath($incPath).DIRECTORY_SEPARATOR."ticket.pdf", 'F');
-    //file_put_contents($incPath.DIRECTORY_SEPARATOR."communication.txt", $communication);
 }

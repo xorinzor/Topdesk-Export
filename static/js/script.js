@@ -111,7 +111,7 @@ $(function() {
     }
 
     function apiCall(data, callback) {
-        $.getJSON("/webApi.php", data, function(data) {
+        $.getJSON("/app/webApi.php", data, function(data) {
             if(data.error == true) {
                 showError("An error has been returned by the exporter API, message: <br />", data.message);
             } else {
