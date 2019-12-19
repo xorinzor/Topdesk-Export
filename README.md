@@ -40,6 +40,7 @@ Did you find this tool useful? Feel free to buy me a beer or a pizza!
 - [Paypal donation](https://paypal.me/xorinzor)
 
 ## Todo
+- Currently limited to a max of 10.000 tickets, handle HTTP code 206 to make this unlimited.
 - Improve the layout of the generated PDF
 - Add more fields from the tickets to the PDF (such as, priority)
 
