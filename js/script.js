@@ -113,15 +113,18 @@ $(function() {
     function apiCall(data, callback) {
         $.getJSON("/webApi.php", data, function(data) {
             if(data.error == true) {
-                callback(false);
-                console.log("An error occured according to the returned JSON, data:", data);
+                showError("An error has been returned by the exporter API, message: <br />", data.message);
             } else {
                 callback(data);
             }
         })
-            .fail(function() {
-                callback(false)
-                console.log("An error occured while performing the API call");
-            });
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            showError("An error occured while performing the API call, reason: <br />" + jqXHR.responseText);
+        });
+    }
+
+    function showError(message) {
+        $("#statusContainer").append('<div class="notification is-danger">' + message + '<br /><hr /><br />If you need help solving this issue, make sure to <a href="https://github.com/xorinzor/TopdeskExport/issues/">report it on the github page</a>.<br />Reload the page to try again.</div>');
+        $("#statusProgress").remove();
     }
 });
