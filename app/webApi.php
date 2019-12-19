@@ -4,10 +4,10 @@ error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 //Classes
 include("topdeskAPI.php");
-include("Incident.php");
-include("Response.php");
-include("File.php");
-include("Email.php");
+include("models/Incident.php");
+include("models/Response.php");
+include("models/File.php");
+include("models/Email.php");
 
 //Libraries
 include("lib/tcpdf.php");
