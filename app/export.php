@@ -55,6 +55,7 @@ function exportIncidentToPDF($api, $incident) {
     // add a page
     $pdf->AddPage();
 
+    //Add the details about the ticket
     $details =
         "<h1>{$incident->getNumber()} - {$incident->getBriefDescription()}</h1>" .
         "<table>

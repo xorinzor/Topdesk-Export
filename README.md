@@ -9,7 +9,7 @@ This will produce a file structure that looks like the following:
     └── /Ticket Name
         └── /emails (contains all emails that have been sent)
         └── /files (contains all attachments)
-        └── ticket.pdf (contains the conversation in a readable format)
+        └── ticket.pdf (contains the ticket details in a readable format)
 ```
 
 ## Requirements
