@@ -1,5 +1,5 @@
 # TopdeskExport
-An export script for a topdesk SAAS installation.
+An export script for a topdesk installation (SAAS installation is confirmed to work, self-hosted is untested but should work too).
 
 This will produce a file structure that looks like the following:
 
@@ -27,6 +27,8 @@ This will produce a file structure that looks like the following:
 > Note: remember that the exporter has the same access as the account you've used to generate the app-password.
 If tickets or responses are hidden from this account, they will not (and cannot) be included in the export.
 
+> Note: Remember to run the script from an IP-address that has access to your Topdesk environment if you have whitelisting enabled. Otherwise the script will be unable to communicate with your Topdesk installation.
+
 ## Usage
 - Hit the `Start Export` button and watch the magic happen. The export is saved in `/output`.
 - The exporter keeps track of its progress and will resume where it left off if the page is closed and reopened. This data is stored in the `current_progress.json`
@@ -39,10 +41,14 @@ Did you find this tool useful? Feel free to buy me a beer or a pizza!
 - [BuyMeACoffee](https://www.buymeacoffee.com/xorinzor)
 - [Paypal donation](https://paypal.me/xorinzor)
 
+## Suggestions?
+Got ideas or feedback? [Create an issue](https://github.com/xorinzor/TopdeskExport/issues/new) and let me know!
+
 ## Todo
 - Currently limited to a max of 10.000 tickets, handle HTTP code 206 to make this unlimited.
 - Improve the layout of the generated PDF
-- Add more fields from the tickets to the PDF (such as, priority)
+- Add more fields from the tickets to the PDF (such as connected Assets)
+- Add excel,csv, or json files containing parseable data, both a complete list, as well as per-ticket.
 
 ## Changelog
 19-12-2019 15:15 - Improved PDF generation, translated some text
