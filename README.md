@@ -1,5 +1,5 @@
 # TopdeskExport
-An export script for a topdesk installation (SAAS installation is confirmed to work, self-hosted is untested but should work too).
+An export script for a topdesk installation (SAAS installation is confirmed to work, self-hosted is untested but should work too as long as it's up-to-date).
 
 This will produce a file structure that looks like the following:
 
