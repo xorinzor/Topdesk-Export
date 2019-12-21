@@ -214,14 +214,15 @@ class topdeskAPI
      */
     public function getIncidentIds($count = 10000) {
         $result = $this->makeCompleteCall($this->baseUrl . 'incidents', ['page_size' => $count], [], true, true);
+        $result = $result['result'];
 
-        array_walk($result['result'], function(&$item, $key) {
+        array_walk($result, function(&$item, $key) {
             return $item = $item->number;
         });
 
-        sort($result['result'], SORT_STRING);
+        sort($result, SORT_STRING);
 
-        return $result['result'];
+        return $result;
     }
 
     /**
@@ -232,6 +233,7 @@ class topdeskAPI
      */
     public function getIncident($id) {
         $inc = $this->makeCall($this->baseUrl . 'incidents/number/' . $id, [], [], true, true);
+        $inc = $inc['response'];
 
         //Create our Incident object
         $i = new Incident($inc->id, $inc->number, $inc->briefDescription, $inc->operatorGroup->name, $inc->operator->name, $inc->caller->dynamicName, $inc->callDate, $inc);
@@ -241,6 +243,7 @@ class topdeskAPI
 
         //Get all responses and attachments
         $responses = $this->getProgressTrail($inc->id);
+
         if (!is_null($responses)) {
             //By default Topdesk sorts the responses in descending order, we want it to be ascending.
             $responses = array_reverse($responses);
@@ -279,6 +282,6 @@ class topdeskAPI
      * @throws Exception
      */
     public function getProgressTrail($ticketId) {
-        return $this->makeCompleteCall($this->baseUrl . 'incidents/id/'.$ticketId.'/progresstrail', ['page_size' => 100, 'inlineimages' => 'true'], [], true, true);
+        return $this->makeCompleteCall($this->baseUrl . 'incidents/id/'.$ticketId.'/progresstrail', ['page_size' => 100, 'inlineimages' => 'true'], [], true, true)['result'];
     }
 }
