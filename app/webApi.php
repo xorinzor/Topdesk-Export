@@ -60,7 +60,7 @@ function apiCall($api, $method, $data)
             break;
 
         case "getIncidentList":
-            $result = $api->getIncidentIds(10000);
+            $result = $api->getIncidentIds(1000);
 
             return returnJson(false, "", [
                 'count' => count($result),
