@@ -106,7 +106,7 @@ class topdeskAPI
             ];
 
             //Save the request to a cache file if a valid request has been made to prevent caching errors
-            if ($enableCache && ($http_code === 201 || $http_code === 206)) {
+            if ($enableCache && ($response['http_code'] === 200 || $http_code === 201 || $http_code === 206)) {
                 $response['uniqId'] = $uniqId;
                 $this->addToCache($uniqId, $response);
             }
@@ -191,7 +191,7 @@ class topdeskAPI
             ];
 
             //Save the request to a cache file if a valid request has been made to prevent caching errors
-            if ($enableCache && $response['http_code'] === 201) {
+            if ($enableCache && ($response['http_code'] === 200 || $response['http_code'] === 201)) {
                 $response['uniqId'] = $uniqId;
                 $this->addToCache($uniqId, $response);
 
