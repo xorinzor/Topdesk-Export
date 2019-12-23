@@ -1,5 +1,5 @@
-# TopdeskExport
-An export script for a topdesk installation (SAAS installation is confirmed to work, self-hosted is untested but should work too as long as it's up-to-date).
+# Topdesk Export
+An export script for Topdesk tickets (SAAS installation is confirmed to work, self-hosted is untested but should work too as long as it's up-to-date).
 
 This will produce a file structure that looks like the following:
 
@@ -24,7 +24,7 @@ This will produce a file structure that looks like the following:
 3. edit the config.ini file and set the correct values
 4. Hit the button, sit back, and let the script do it's magic.
 
-> Note: if you have lots of tickets (8000+) you might run into request timeouts. Edit your php.ini to increase this limit (or make it unlimited)
+> Note: if you have lots of tickets (8000+) you might run into request timeouts due to the default PHP configuration being limited to 30 seconds. Edit your php.ini to increase this limit (or make it unlimited)
 
 > Note: remember that the exporter has the same access as the account you've used to generate the app-password.
 If tickets or responses are hidden from this account, they will not (and cannot) be included in the export.
