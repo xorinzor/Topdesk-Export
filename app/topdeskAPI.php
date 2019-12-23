@@ -21,7 +21,7 @@ class topdeskAPI
      * @return false|string
      */
     private function getFromCache($id) {
-        return file_get_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache");
+        return json_decode(file_get_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache"), true);
     }
 
     /**
@@ -38,7 +38,7 @@ class topdeskAPI
      * @param $content
      */
     private function addToCache($id, $content) {
-        file_put_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache", $content);
+        file_put_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache", json_encode($content));
     }
 
     /**
@@ -74,7 +74,7 @@ class topdeskAPI
 
         //Check if caching is enabled, and if so, create a unique ID for the request
         if($enableCache) {
-            $uniqId = md5($url . json_encode($headers));
+            $uniqId = md5($url . json_encode($headers) . json_encode($params));
         }
 
         //If cache is enabled, check if a cache file exists for the request
@@ -90,11 +90,10 @@ class topdeskAPI
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_ENCODING, "");
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
 
             $response = curl_exec($ch);
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-            curl_close($ch);
 
             if ($response === false) {
                 throw new Exception("An error occured during the cURL request");
@@ -137,7 +136,7 @@ class topdeskAPI
 
         //Check if caching is enabled, and if so, create a unique ID for the request
         if($enableCache) {
-            $uniqId = md5($url . json_encode($headers));
+            $uniqId = md5($url . json_encode($headers) . json_encode($params));
         }
 
         //If cache is enabled, check if a cache file exists for the request
@@ -145,8 +144,13 @@ class topdeskAPI
             $response = $this->getFromCache($uniqId);
         }
         else {
+            //Set the new offset for our next API call, this creates a unique uniqId for the first call
+            //Preventing creating a cache file with the same ID as the makeCompleteCall (due to the same parameters)
+            $params['start'] = 0;
+
             //Make the original API call with the same parameters.
             $call = $this->makeCall($url, $params, $headers, $enableCache, true);
+            $response = $call['result'];
 
             //Add the unique ID from the call to our tempCache array for removal at a later stage.
             if($enableCache) {
@@ -155,18 +159,15 @@ class topdeskAPI
 
             //Check if a partial result has been returned by the call.
             if ($call['http_code'] == 206) {
-                $response = $call['response'];
                 $start = count($response);
 
                 //Check if the offset needs adjusting based on the parameters passed to this call
-                if (array_key_exists("start", $params)) {
-                    $start += $params['start'];
-                }
+                $start += $params['start'];
 
                 //Keep making API calls if the call has returned a 206 code
                 while ($call['http_code'] === 206) {
                     //Set the new offset for our next API call
-                    array_merge($params, ['start' => $start]);
+                    $params['start'] = $start;
 
                     //Fetch the next set of data.
                     $call = $this->makeCall($url, $params, $headers, true, true);
@@ -176,18 +177,18 @@ class topdeskAPI
                         $tempCache[] = $call['uniqId'];
                     }
 
-                    //Combine the results
-                    array_push($response, $call['response']);
+                    //Append the results to the "main" array
+                    $response = array_merge($response, $call['result']);
 
                     //Adjust our offset
-                    $start += count($call['response']);
+                    $start += count($call['result']);
                 }
             }
 
             //Return the data from our request
             $response = [
                 'http_code' => $call['http_code'],
-                'response'  => ($decode) ? $response : json_encode($response)
+                'result'  => ($decode) ? $response : json_encode($response)
             ];
 
             //Save the request to a cache file if a valid request has been made to prevent caching errors
@@ -212,7 +213,7 @@ class topdeskAPI
      * @return mixed
      * @throws Exception
      */
-    public function getIncidentIds($count = 10000) {
+    public function getIncidentIds($count = 1000) {
         $result = $this->makeCompleteCall($this->baseUrl . 'incidents', ['page_size' => $count], [], true, true);
         $result = $result['result'];
 
@@ -233,7 +234,7 @@ class topdeskAPI
      */
     public function getIncident($id) {
         $inc = $this->makeCall($this->baseUrl . 'incidents/number/' . $id, [], [], true, true);
-        $inc = $inc['response'];
+        $inc = $inc['result'];
 
         //Create our Incident object
         $i = new Incident($inc->id, $inc->number, $inc->briefDescription, $inc->operatorGroup->name, $inc->operator->name, $inc->caller->dynamicName, $inc->callDate, $inc);
