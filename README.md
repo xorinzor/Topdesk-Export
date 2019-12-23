@@ -52,6 +52,8 @@ Got ideas or feedback? [Create an issue](https://github.com/xorinzor/TopdeskExpo
 - Add excel,csv, or json files containing parseable data, both a complete list, as well as per-ticket.
 
 ## Changelog
+23-12-2019 15:40 - Change caching to use serialization instead of json, to keep object types.
+
 23-12-2019 14:00 - Implemented handling of HTTP 206, unlimited tickets can now be parsed instead of a max of 10.000
 
 19-12-2019 15:15 - Improved PDF generation, translated some text
