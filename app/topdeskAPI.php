@@ -18,10 +18,17 @@ class topdeskAPI
     /**
      * Fetches a file from cache (if it exists)
      * @param $id
+     * @param decode
      * @return false|string
      */
-    private function getFromCache($id) {
-        return json_decode(file_get_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache"), true);
+    private function getFromCache($id, $decode = false) {
+        $result = unserialize(file_get_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache"));
+
+        if($decode) {
+            $result['result'] = json_decode($result['result']);
+        }
+
+        return $result;
     }
 
     /**
@@ -38,7 +45,7 @@ class topdeskAPI
      * @param $content
      */
     private function addToCache($id, $content) {
-        file_put_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache", json_encode($content));
+        file_put_contents(".." . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $id . ".cache", serialize($content));
     }
 
     /**
@@ -79,7 +86,7 @@ class topdeskAPI
 
         //If cache is enabled, check if a cache file exists for the request
         if ($enableCache && $this->cacheExists($uniqId)) {
-            $response = $this->getFromCache($uniqId);
+            $response = $this->getFromCache($uniqId, $decode);
         }
         //No cache file found or caching is disabled, perform a new request.
         else {
@@ -109,11 +116,10 @@ class topdeskAPI
                 $response['uniqId'] = $uniqId;
                 $this->addToCache($uniqId, $response);
             }
-        }
 
-        //If $decode equals true, the response should be decoded.
-        if($decode) {
-            $response['result'] = json_decode($response['result']);
+            if($decode) {
+                $response['result'] = json_decode($response['result']);
+            }
         }
 
         //Return the response.
@@ -141,7 +147,7 @@ class topdeskAPI
 
         //If cache is enabled, check if a cache file exists for the request
         if ($enableCache && $this->cacheExists($uniqId)) {
-            $response = $this->getFromCache($uniqId);
+            $response = $this->getFromCache($uniqId, $decode);
         }
         else {
             //Set the new offset for our next API call, this creates a unique uniqId for the first call
@@ -188,7 +194,7 @@ class topdeskAPI
             //Return the data from our request
             $response = [
                 'http_code' => $call['http_code'],
-                'result'  => ($decode) ? $response : json_encode($response)
+                'result'  => json_encode($response)
             ];
 
             //Save the request to a cache file if a valid request has been made to prevent caching errors
@@ -200,6 +206,10 @@ class topdeskAPI
                 foreach($tempCache as $tempFile) {
                     $this->removeFromCache($tempFile);
                 }
+            }
+
+            if($decode) {
+                $response['result'] = json_decode($response['result']);
             }
         }
 
@@ -223,7 +233,7 @@ class topdeskAPI
 
         sort($result, SORT_STRING);
 
-        return $result;
+        return (array) $result;
     }
 
     /**
@@ -234,7 +244,7 @@ class topdeskAPI
      */
     public function getIncident($id) {
         $inc = $this->makeCall($this->baseUrl . 'incidents/number/' . $id, [], [], true, true);
-        $inc = $inc['result'];
+        $inc = (object) $inc['result'];
 
         //Create our Incident object
         $i = new Incident($inc->id, $inc->number, $inc->briefDescription, $inc->operatorGroup->name, $inc->operator->name, $inc->caller->dynamicName, $inc->callDate, $inc);

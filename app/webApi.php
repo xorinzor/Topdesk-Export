@@ -70,6 +70,7 @@ function apiCall($api, $method, $data)
 
         case "exportTicket":
             $inc = $api->getIncident($data['ticketId']);
+
             exportIncidentToPDF($api, $inc);
 
             $progress = [

@@ -92,12 +92,12 @@ function exportIncidentToPDF($api, $incident) {
         if($response instanceof Email) {
             $attachmentPath = $incPath . DIRECTORY_SEPARATOR . "emails";
             @mkdir($attachmentPath);
-            file_put_contents($attachmentPath . DIRECTORY_SEPARATOR . $response->getName(), $api->makeCall(BASE_URL . $response->getUrl(), [], [], false)['response']);
+            file_put_contents($attachmentPath . DIRECTORY_SEPARATOR . $response->getName(), $api->makeCall(BASE_URL . $response->getUrl(), [], [], false)['result']);
         }
         elseif($response instanceof File) {
             $attachmentPath = $incPath . DIRECTORY_SEPARATOR . "files";
             @mkdir($attachmentPath);
-            file_put_contents($attachmentPath . DIRECTORY_SEPARATOR . $response->getName(), $api->makeCall(BASE_URL . $response->getUrl(), [], [], false)['response']);
+            file_put_contents($attachmentPath . DIRECTORY_SEPARATOR . $response->getName(), $api->makeCall(BASE_URL . $response->getUrl(), [], [], false)['result']);
         }
 
         if(!empty($response->getRequest())) {
