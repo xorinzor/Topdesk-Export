@@ -39,6 +39,8 @@ $(function() {
                 totalTicketCount = result.result.count;
                 ticketList = result.result.data;
 
+                console.log(result);
+
                 //Check if tickets are found.
                 if(totalTicketCount === 0) {
                     showError("No tickets found, does the configured account have the proper permissions in topdesk?");

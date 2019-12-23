@@ -41,10 +41,6 @@ class Incident
         return $this->briefDescription;
     }
 
-    public function getData() {
-        return $this->data;
-    }
-
     public function getTimestamp() {
         return $this->timestamp->format("Y-m-d H:i:s");
     }
@@ -63,5 +59,9 @@ class Incident
 
     public function getOperator() {
         return $this->operator;
+    }
+
+    public function getData() {
+        return $this->data;
     }
 }

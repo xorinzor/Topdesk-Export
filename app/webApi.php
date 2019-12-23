@@ -60,7 +60,7 @@ function apiCall($api, $method, $data)
             break;
 
         case "getIncidentList":
-            $result = $api->getIncidentIds(10000);
+            $result = $api->getIncidentIds(1000);
 
             return returnJson(false, "", [
                 'count' => count($result),
@@ -70,6 +70,7 @@ function apiCall($api, $method, $data)
 
         case "exportTicket":
             $inc = $api->getIncident($data['ticketId']);
+
             exportIncidentToPDF($api, $inc);
 
             $progress = [

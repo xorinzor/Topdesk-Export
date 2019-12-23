@@ -2,9 +2,3 @@ config.ini
 current_progress.json
 
 .idea
-
-cache/*
-!cache/empty
-
-output/*
-!output/empty
