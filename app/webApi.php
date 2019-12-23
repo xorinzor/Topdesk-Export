@@ -1,6 +1,10 @@
 <?php
 
+//Hide warnings and notices
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
+
+//Change configuration to have no request time-limit
+set_time_limit(0);
 
 //Classes
 include("topdeskAPI.php");

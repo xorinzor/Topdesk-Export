@@ -24,8 +24,6 @@ This will produce a file structure that looks like the following:
 3. edit the config.ini file and set the correct values
 4. Hit the button, sit back, and let the script do it's magic.
 
-> Note: if you have lots of tickets (8000+) you might run into request timeouts due to the default PHP configuration being limited to 30 seconds. [Edit your php.ini to increase this limit (or make it unlimited)](https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time)
-
 > Note: remember that the exporter has the same access as the account you've used to generate the app-password.
 If tickets or responses are hidden from this account, they will not (and cannot) be included in the export.
 
@@ -46,12 +44,13 @@ Did you find this tool useful? Feel free to buy me a beer or a pizza!
 Got ideas or feedback? [Create an issue](https://github.com/xorinzor/TopdeskExport/issues/new) and let me know!
 
 ## Todo
-- Prevent request timeouts if lots of data is being fetched
 - Improve the layout of the generated PDF
 - Add more fields from the tickets to the PDF (such as connected Assets)
 - Add excel,csv, or json files containing parseable data, both a complete list, as well as per-ticket.
 
 ## Changelog
+23-12-2019 16:10 - Added `set_time_limit(0)` which, in theory, should prevent request timeouts. If you still experience them, edit `max_execution_time` in your `php.ini` to a value of `0`.
+
 23-12-2019 15:40 - Change caching to use serialization instead of json, to keep object types.
 
 23-12-2019 14:00 - Implemented handling of HTTP 206, unlimited tickets can now be parsed instead of a max of 10.000
